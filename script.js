@@ -4,89 +4,83 @@ function computerPlay(){
     return (random < 0.33) ? "rock" : (random < 0.66) ? "paper" : "scissors";
 }
 
+let scoreUser = 0;
+let scoreCmp = 0;
+
 //play out a single round between computer and player
-function singleRound(playerSelection, computerSelection){
-    let player =playerSelection.toLowerCase();
-     switch (player){
-        case "rock": 
+function playRound(e){
+    let result = "";
+    let playerSelection = e.target.textContent;
+   
+
+    //account for all possible cases in the game
+    let computerSelection = computerPlay();
+     switch (playerSelection){
+        case "ROCK": 
             if (computerSelection == "rock"){
-                return "Tie -_-";
+                result = "Tie -_-";
             }
             if (computerSelection == "paper"){
-                return "You Lose! Better luck next round";
+                result = "You Lose! Better luck next time";
+                scoreCmp++;
             }
             if (computerSelection == "scissors"){
-                return "You are VICTORIOUS!";
+                result = "You win this round!";
+                scoreUser++;
             }
-        case "paper": 
+            break;
+        case "PAPER": 
             if (computerSelection == "rock"){
-                return "You are VICTORIOUS!";
+                result = "You win this round!";
+                scoreUser++;
             }
             if (computerSelection == "paper"){
-                return "Tie -_-";
+                result = "Tie -_-";
             }
             if (computerSelection == "scissors"){
-                return "You Lose! Better luck next round";
+                result = "You Lose! Better luck next time";
+                scoreCmp++;
             }
-        case "scissors":
-        case "scissor": 
+            break;
+        case "SCISSORS":
             if (computerSelection == "rock"){
-                return "You Lose! Better luck next round";
+                result = "You Lose! Better luck next time";
+                scoreCmp++;
             }
             if (computerSelection == "paper"){
-                return "You are VICTORIOUS!";
+                result = "You win this round!";
+                scoreUser++;
             }
             if (computerSelection == "scissors"){
-                return "Tie -_-";
+                result = "Tie -_-";
             }
-        default:
-            return false;
+            break;
         }
-}
 
-//get number of rounds to be played out
-let nmber = "";
-do {
-   let gamesNumber = window.prompt("How many games are you willing to play?");
-   nmber = parseFloat(gamesNumber);
-} while (!(Number.isInteger(nmber)) || nmber < 1);
+    //dislpay results to user
+    const displayResult = document.querySelector('p');
+    displayResult.textContent = "Your opponent chose " + computerSelection + "..." + result;
+    const score = document.querySelector('h3');
+    score.textContent = "YOU vs BOT: " + scoreUser + "-" + scoreCmp;
 
-//play multiple rounds according to user input
-function game(gamesNumber){
-    let playerSelection = "";
-    let computerSelection = "";
-    let compScore = 0, playerScore = 0;
-    
-    for (let i = 0; i < gamesNumber ; i++){
-        playerSelection = window.prompt("Your Choice Is:");
-        computerSelection = computerPlay();
-        result = singleRound(playerSelection, computerSelection);
-
-        //test for invalid input without losing round
-        if (!result){
-            console.log("Invalid input, try again");
-            i--;
-            continue;
-        }else {
-            //display round result
-            console.log("You're opponent chose " + computerSelection + "..." + result); 
-
-            //increment round winner score and display score
-            if (result == "You are VICTORIOUS!"){
-                playerScore++;
-            }
-            else if (result == "You Lose! Better luck next round"){
-                compScore++;
-            }
-            console.log("YOU vs AI(or perhaps a random generator): " + playerScore + "-" + compScore ); 
-        }
+    if (scoreUser == 5){
+        displayResult.textContent = "YOU SCORED 5 ~ VICTORY!"
+        scoreUser = 0;
+        scoreCmp = 0;
     }
-
-    //declare winner of whole game
-    let winner = (playerScore > compScore) ? "HUMANITY" : (playerScore == compScore) ? "Boring...It's a TIE" : "ARTIFICIAL INTELLIGENCE";
-    console.log("WINNER: "+ winner);
+    if (scoreCmp == 5){
+        displayResult.textContent = "BOT SCORED 5 ~ DEFEAT!"
+        scoreCmp = 0;
+        scoreUser = 0;
+    }
+    
 }
 
-game(nmber);
 
+const rock = document.querySelector(".rock");
+const paper = document.querySelector(".paper");
+const scissors = document.querySelector(".scissors");
 
+rock.addEventListener("click", playRound);
+paper.addEventListener("click", playRound);
+scissors.addEventListener("click", playRound);
